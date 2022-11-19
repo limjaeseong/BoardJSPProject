@@ -1,14 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@page import="com.crud.dao.BoardDAO, com.crud.bean.BoardVO"%>
+<%@page import="com.example.dao.BoardDAO"%>
+<%@page import="com.example.bean.BoardVO"%>
+<%@page import="com.example.common.FileUpload"%>
 <%
 	String sid = request.getParameter("id");
 	if (sid != ""){  
 		int id = Integer.parseInt(sid);
-		BoardVO u = new BoardVO();
-		u.setSeq(id);
 		BoardDAO boardDAO = new BoardDAO();
-		boardDAO.deleteBoard(u);
+
+		String filename = BoardDAO.getPhotoFilename(id);
+		if(filename != null)
+			FileUpload.deleteFile(request, filename);
+		boardDAO.deleteBoard(id);
 	}
 	response.sendRedirect("posts.jsp");
 %>

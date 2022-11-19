@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@page import="com.crud.dao.BoardDAO, com.crud.bean.BoardVO,java.util.*"%>
+<%@page import="com.example.dao.BoardDAO, com.example.bean.BoardVO,java.util.*"%>
+<%@page import="com.oreilly.servlet.*"%>
+<%@page import="com.oreilly.servlet.multipart.DefaultFileRenamePolicy"%>
+<%@ page import="com.example.common.FileUpload" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
@@ -38,27 +41,39 @@
 <body>
 <h1>자유게시판</h1>
 <%
+	request.setCharacterEncoding("utf-8");
 	BoardDAO boardDAO = new BoardDAO();
+	FileUpload upload = new FileUpload();
+	BoardVO u = upload.uploadPhoto(request);
+
+	int i = boardDAO.insertBoard(u);
 	List<BoardVO> list = boardDAO.getBoardList();
 	request.setAttribute("list",list);
 %>
 <table id="list" width="90%">
 <tr>
 	<th>Id</th>
+	<th>Category</th>
 	<th>Title</th>
 	<th>Writer</th>
+	<th>Photo</th>
 	<th>Content</th>
 	<th>Regdate</th>
+	<th>Revdate</th>
 	<th>Edit</th>
 	<th>Delete</th>
 </tr>
 <c:forEach items="${list}" var="u">
 	<tr>
 		<td>${u.getSeq()}</td>
+		<td>${u.getCategory()}</td>
 		<td>${u.getTitle()}</td>
 		<td>${u.getWriter()}</td>
+		<td><c:if test="${vo.getPhoto() ne ''}"><br/>
+		<img src="${pageContext.request.contextPath}/upload/${vo.getPhoto()}" class="photo"></c:if></td>
 		<td>${u.getContent()}</td>
 		<td>${u.getRegdate()}</td>
+		<td>${u.getRevdate()}</td>
 		<td><a href="editform.jsp?id=${u.getSeq()}">Edit</a></td>
 		<td><a href="javascript:delete_ok('${u.getSeq()}')">Delete</a></td>
 	</tr>
